@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Flask 透過 Ajax 顯示表格</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <!-- <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet"> -->
+
+    </head>
+    <body>
+
+        <div class="warp">
+            <div id="input_data">
+                <label class="label">交易所</label>
+                <select id="input_value" name="input_value">
+                    {% for i in exchanges %}	
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </select>
+                <!-- <input  type="text" id="input_value" name="input_value"/> -->
+                <label class="label">交易對</label>
+                <select id="input_value2" name="input_value2">
+                    {% for i in symbols %}	
+                    <option>{{ i }}</option>
+                    {% endfor %}
+                </select>
+                <!-- <input  type="text" id="input_value2" name="input_value2"/> -->
+                <button class="main_btn">送出</button>
+            </div>
+
+            <table id="table_data" class="table_data">
+                <!-- <thead><tr><th>交易對</th><th>資金費率</th><th>交易所</th></tr></thead> -->
+                <!-- <tr>
+                    <th>名稱</th>
+                    <th>周期</th>
+                    <th>張數</th>
+                    <th>方向</th>
+                </tr>
+                {% for item in instruments %}
+                <tr>
+                    <td>{{ item.名稱 }}</td>
+                    <td>{{ item.周期 }}</td>
+                    <td>{{ item.張數 }}</td>
+                    <td>
+                        {% if item.方向 == 1 %}
+                            <span class="badge bg-danger">做多</span>
+                        {% elif item.方向 == -1 %}
+                            <span class="badge bg-danger">做空</span>
+                        {% else %}
+                            <span class="badge bg-success">平倉</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %} -->
+            </table>
+        </div>
+
+        <script type=text/javascript>
+            // console.log("{{ columns }}")
+            // alert("{{ column_dict }}")     
+            var temp = "<tr>" 
+            $.ajax({
+                    url:'/test7_get',
+                    type:'GET',
+                    contentType: 'application/json',
+                    success:function (x) {
+                         
+                        for(var i=0;i<x.length;i++){
+                            console.log(x[i]);
+                            temp = temp + "<th>" + x[i] + "</th>"
+                        }
+                        temp += "</tr>"
+                        console.log(temp);
+                        // "<tr><th>名稱</th><th>周期</th><th>張數</th><th>方向</th></tr>"               
+                        // console.log(JSON.stringify("{{column_dict}}"));
+                        $("#table_data").html("");  //把資料清空
+                        $("#table_data").append(temp);     
+                    }
+                });
+
+            $(".main_btn").click(function(){
+                $.ajax({
+                    url:"/test6",
+                    type:'POST',
+                    data: {'mydata':$('select[id="input_value"]').val(), 'mydata2':$('select[id="input_value2"]').val()},
+                    dataType:"json",
+                    success:function (x) {
+                        // console.log(Object.keys(x).length);
+                        $("#table_data").html("");  //把資料清空
+                        // $("#table_data").append("<thead><tr><th>交易對</th><th>資金費率</th><th>交易所</th></tr></thead>");    
+                        $("#table_data").append(temp);          
+                        for(var i=0;i<Object.keys(x).length;i++){
+                            var item=x[i];
+                            console.log(Object.keys(item))
+                            // console.log(item['instrument_id'], item['funding'], item['exchange']);
+                            // // $("#table_data").append(item_html.replace("a1",item['instrument_id']).replace("a2",item['funding']).replace("a3",item['exchange']));
+                            var item_html="<tr>"
+                            item_html = item_html + "<td>" + item['名稱'] + "</td>"
+                            item_html = item_html + "<td>" + item['周期'] + "</td>"
+                            item_html = item_html + "<td>" + item['張數'] + "</td>"
+                            item_html = item_html + "<td>" + item['方向'] + "</td>"
+                            item_html = item_html + "</tr>"
+                            $("#table_data").append(item_html);
+                        }
+                    }
+                });
+            });
+        </script> 
+
+
+    </body>
+</html>

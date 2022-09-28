@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - 好看的表格CSS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+  
+  <div class="wrap">
+    <table id="table_data">
+      <tr>
+        <th>名稱</th>
+        <th>周期</th>
+        <th>張數</th>
+        <th>方向</th>
+      </tr>
+      <tr>
+        <td>BTCUSDT</td>
+        <td>2h</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td>ETHUSDT</td>
+        <td>1h</td>
+        <td>3</td>
+        <td>1</td>
+      </tr>
+        <tr>
+        <td>SOLUSDT</td>
+        <td>5m</td>
+        <td>6</td>
+        <td>-1</td>
+      </tr>
+      <tr>
+        <td>AXSUSDT</td>
+        <td>30m</td>
+        <td>7</td>
+        <td>0</td>
+      </tr>
+        <tr>
+        <td>RVNUSDT</td>
+        <td>15m</td>
+        <td>21</td>
+        <td>1</td>
+      </tr>
+    </table>
+  </div>
+  
+  <script type=text/javascript>      
+    $(".btn").click(function(){
+        $.ajax({
+            url:"/trans",
+            type:'POST',
+            data: {'mydata':$('input[id="word"]').val()},
+            dataType:"json",
+        success:function (x) {
+            // console.log($('input[id="word"]').val()); //跟下一行是一樣的
+            console.log(x.word); // 從python處理過返回的json格式結果
+            console.log(x.trans);
+            // var html ="<span>"+x.trans+"</span>";
+            // $(".modal-body").text(x.trans);
+            // $('#myModal').modal();
+            var html ="<span>"+x.trans+"</span>";
+            var html2 ="<span>"+x.word+"</span>";
+            $(".modal-body").html(html);
+            $(".modal-title").html(html2);
+        }});
+    });
+  </script>
+
+</body>
+</html>

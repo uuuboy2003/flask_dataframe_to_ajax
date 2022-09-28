@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Flask 透過 Ajax 顯示表格</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <!-- <link rel="stylesheet" href="./style.css"> -->
+        <!-- </script><script  src="./script.js"></script> -->
+    </head>
+    <body>
+        <input  type="text" id="input_value" name="input_value"/>
+        <button class="main_btn">按鈕</button>
+
+        <hr>
+        <div>
+            <table class="table_content">
+                <thead>
+                    <tr>
+                        {% for i in column_list %}
+                            <td><b>{{ i }}</b></td>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="table_data" class="table_data">
+                    <!-- <tr>
+                        <td></td>
+                        <td></td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- <div id="table_data1">
+
+        </div> -->
+        
+        <script type=text/javascript>
+            // console.log("name");
+            // $(".table_content").html({{ code }});
+
+            var item_html="<tr><td>name</td><td>price</td></tr>"
+            $(".main_btn").click(function(){
+                $.ajax({
+                    url:"/test2",
+                    type:'POST',
+                    data: {'mydata':$('input[id="input_value"]').val()},
+                    dataType:"json",
+                    success:function (x) {
+                        // var jsonText = JSON.stringify(values);
+                        
+                        var sss = "<tr>"
+                        $("#table_data").html("");  //把資料清空
+                        // $("#table_data").append("<thead><tr><th>交易幣種</th><th>即時價格</th></tr></thead>");
+                        for(var i=0;i<x.length;i++){
+                            console.log(i);
+                            var item=x[i];
+                            console.log(item);
+                            $("#table_data").append(item_html.replace("name",item['name']).replace("price",item['price']));
+                        }
+                    }
+                });
+            });
+        </script>
+
+    </body>
+</html>
+

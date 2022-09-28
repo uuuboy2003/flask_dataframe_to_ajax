@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flask 透過 Ajax 顯示表格</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <input  type="text" id="word" name="word" />
+    <button class="btn" data-toggle="modal" data-target="#myModal">翻译</button>
+
+    <div class="modal fade" id="myModal">
+        <table id="example1" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>名稱</th>
+                <th>周期</th>
+                <th>張數</th>
+                <th>方向</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in pos %}
+            <tr>
+                <td>{{ item.strategy }}</td>
+                <td>{{ item.time_interval }}</td>
+                <td>{{ item.size }}</td>
+                <td>
+                    {% if item.side == "short" %}
+                        <span class="badge bg-danger">做空</span>
+                    {% else %}
+                        <span class="badge bg-success">做多</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script type=text/javascript>
+        
+        $(".btn").click(function(){
+            $.ajax({
+                url:"/trans",
+                type:'POST',
+                data: {'mydata':$('input[id="word"]').val()},
+                dataType:"json",
+            success:function (x) {
+                // console.log($('input[id="word"]').val()); //跟下一行是一樣的
+                console.log(x.word); // 從python處理過返回的json格式結果
+                console.log(x.trans);
+                // var html ="<span>"+x.trans+"</span>";
+                // $(".modal-body").text(x.trans);
+                // $('#myModal').modal();
+                var html ="<span>"+x.trans+"</span>";
+                var html2 ="<span>"+x.word+"</span>";
+                $(".modal-body").html(html);
+                $(".modal-title").html(html2);
+            }});
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Flask 透過 Ajax 顯示表格</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <input  type="text" id="input_value" name="input_value"/>
+        <button class="main_btn">按鈕</button>
+
+        <hr>
+
+        <div class="table_content">
+            <table id="table_data" class="table_data">
+                <thead>
+                <tr>
+                    <th>交易對</th>
+                    <th>資金費率</th>
+                    <th>交易所</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for instrument in instruments %}
+                <tr>
+                    <td>{{ instrument.instrument_id }}</td>
+                    <td>{{ instrument.funding }}%</td>
+                    <td>{{ instrument.exchange }}%</td>
+                    <!-- <td>
+                        <button type="button" class="btn">{{ instrument.instrument_id }}立即套利</button>
+                    </td> -->
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <script type=text/javascript>
+
+            $.ajax({
+                    url:'/test3',
+                    type:'GET',
+                    contentType: 'application/json',
+                    success:function (response) {
+
+                        
+                        if (response.errno == 200){
+                            alert(response.errmsg)
+                            location.reload()
+                        }else(
+                            alert('退出失败')
+                        )
+                    }
+                })
+
+            // var obj = { 0: 'a', 1: 'b', 2: 'c' };
+            // console.log(Object.keys(obj));
+            // var item_html="<tr><td>a1</td><td>a2</td><td>a3</td></tr>"
+            $(".main_btn").click(function(){
+                $.ajax({
+                    url:"/test3",
+                    type:'POST',
+                    data: {'mydata':$('input[id="input_value"]').val()},
+                    dataType:"json",
+                    success:function (x) {
+                        // console.log(Object.keys(x).length);
+                        $("#table_data").html("");  //把資料清空
+                        $("#table_data").append("<thead><tr><th>交易對</th><th>資金費率</th><th>交易所</th></tr></thead>");              
+                        for(var i=0;i<Object.keys(x).length;i++){
+                            var item=x[i];
+                            console.log(Object.keys(item))
+                            // console.log(item['instrument_id'], item['funding'], item['exchange']);
+                            // // $("#table_data").append(item_html.replace("a1",item['instrument_id']).replace("a2",item['funding']).replace("a3",item['exchange']));
+                            var item_html="<tr>"
+                            item_html = item_html + "<td>" + item['instrument_id'] + "</td>"
+                            item_html = item_html + "<td>" + item['funding'] + "</td>"
+                            item_html = item_html + "<td>" + item['exchange'] + "</td>"
+                            item_html = item_html + "</tr>"
+                            $("#table_data").append(item_html);
+                        }
+                    }
+                });
+            });
+        </script> 
+
+
+    </body>
+</html>
